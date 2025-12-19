@@ -1,24 +1,39 @@
 #include "utils.h"
 
-// Clear the screen.
-void clearScreen(){
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+void printMenu_1(){
+    printf("\n===== Inventory Management System =====\n\n");
+    printf("1. Insert / Update Product\n");
+    printf("2. Insert New Order\n");
+    printf("3. Print Inventory\n");
+    printf("4. Execute Orders\n");
+    printf("5. Exit\n");
+    printf("Select option: ");
 }
 
-// Pause system (Made for debugging).
-void pause(){
-    printf("\nPress ENTER to continue...");
-    getchar();
+void printMenu_2(){
+    printf("\n=======================================\n\n");
+    printf("Enter product EAN: ");
 }
 
-// Clear input.
-void clearBuffer(){
-    int ch;
-    while((ch = getchar()) != '\n' && ch != EOF);
+void printMenu_3(char *EAN){
+    printf("\n=======================================\n\n");
+    printf("Enter product EAN: %s\n", EAN);
+    printf("Enter product name: ");
+}
+
+void printMenu_4(char *EAN, char *productName){
+    printf("\n=======================================\n\n");
+    printf("Enter product EAN: %s\n", EAN);
+    printf("Enter product name: %s\n", productName);
+    printf("Enter quantity: ");
+}
+
+void printMenu_5(char *EAN, char *productName, int quantity){
+    printf("\n=======================================\n\n");
+    printf("Enter product EAN: %s\n", EAN);
+    printf("Enter product name: %s\n", productName);
+    printf("Enter quantity: %d\n", quantity);
+    printf("Enter price: ");
 }
 
 void mainMenu(int *number){
@@ -109,7 +124,7 @@ void readEAN(char *EAN){
         if(!strchr(buffer, '\n')){
             clearBuffer();
             clearScreen();
-            printf("\nInvalid EAN. Please try again | (8 - 13) Characters.\n");
+            printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
             printMenu_2();
             continue;
         }
@@ -121,7 +136,7 @@ void readEAN(char *EAN){
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid EAN. Please try again | (8 - 13) Characters.\n");
+            printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
             printMenu_2();
             continue;
         }
@@ -141,7 +156,7 @@ void readEAN(char *EAN){
             int length = strlen(tempValue);
             if(!(length >= EAN_MIN_DIGITS && length <= EAN_MAX_DIGITS)){
                 clearScreen();
-                printf("\nInvalid EAN. Please try again | (8 - 13) Characters.\n");
+                printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
                 printMenu_2();
                 continue;
             }
@@ -149,7 +164,7 @@ void readEAN(char *EAN){
             return;
         } 
         clearScreen();
-        printf("\nInvalid EAN. Please try again | (8 - 13) Characters.\n");
+        printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
         printMenu_2();
     }
 }
@@ -348,24 +363,24 @@ void readPrice(char *EAN, char *productName, int quantity, double *price){
     }
 }
 
-void firstScreen(){
+void firstOptionScreen(){
 
 }
 
-void secondScreen(){
+void secondOptionScreen(){
 
 }
 
-void thirdScreen(){
+void thirdOptionScreen(){
 
 }
 
-void lastScreen(){
+void fourthOptionScreen(){
 
 }
 
 // Run the program.
-int runMS(int option){
+int runMS(int option, Product **inventory){
     switch (option){
     case 1:
         // Initialize variables.
@@ -373,23 +388,33 @@ int runMS(int option){
         double price;
         char EAN[EAN_BUF], productName[NAME_LENGTH];
 
-        // Read all of them.
+        // Read the EAN.
         readEAN(EAN);
+        
+        // Suggest product if the prefix is NOT 13 characters long.
+        if(!suggestProduct(*inventory, EAN)) break; 
+
+        // Check for product updates.
+        if(updateProduct(*inventory, EAN)) break;
+
+        // If we suggest a product, then call updateQuantity().
         readProductName(EAN, productName);
         readQuantity(EAN, productName, &quantity);
         readPrice(EAN, productName, quantity, &price);
-
-        // Print all of them.
         printf("\nProduct added successfully.\n");
+
+        // Add product to the list;
+        *inventory = insertProduct(*inventory, EAN, productName, quantity, price);
         break;
-    case 2:
-        secondScreen();
+        case 2:
+        secondOptionScreen();
         break;
-    case 3:
-        thirdScreen();
+        case 3:
+        printInventory(*inventory);
+        thirdOptionScreen();
         break;
     case 4:
-        lastScreen();
+        fourthOptionScreen();
         break;
     default:
         printf("\nExiting Program. Goodbye!\n");

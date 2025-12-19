@@ -12,12 +12,15 @@ dit24200@uop.gr
 
 */
 
+// REMEMBER TO FREE ALL MEMORY
+
 int main(void){
 
     int option;
+    Product *inventory = NULL;
     do {
         mainMenu(&option);
-        runMS(option);
+        runMS(option, &inventory);
         if(option != 5) pause();
     } while(option != 5);
 }

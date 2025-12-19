@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include "common.h"
 
-
 // Check .c file for function explanations. 
 
 void initializeQueue();
