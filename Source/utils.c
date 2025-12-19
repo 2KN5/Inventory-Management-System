@@ -7,7 +7,7 @@ void printMenu_1(){
     printf("3. Print Inventory\n");
     printf("4. Execute Orders\n");
     printf("5. Exit\n");
-    printf("Select option: ");
+    printf("\nSelect option: ");
 }
 
 void printMenu_2(){
