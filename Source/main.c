@@ -12,8 +12,6 @@ dit24200@uop.gr
 
 */
 
-// REMEMBER TO FREE ALL MEMORY
-
 int main(void){
 
     int option;
