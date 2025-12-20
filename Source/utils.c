@@ -194,8 +194,17 @@ void readProductName(char *EAN, char *productName){
             printMenu_3(EAN);
             continue;
         } 
+
         buffer[strlen(buffer) - 1] = '\0';
-        strcpy(productName, buffer);
+        char *temp = buffer;
+        while(isspace(*temp)) ++temp;
+        if(strlen(temp) < 1){
+            clearScreen();
+            printf("\nNo input provided. Please enter a product name.\n");
+            printMenu_3(EAN);
+            continue;
+        }
+        strcpy(productName, temp);
         return;
     }
 }
@@ -363,6 +372,168 @@ void readPrice(char *EAN, char *productName, int quantity, double *price){
     }
 }
 
+void readCustomerCode(char *customerCode){
+
+    // Print menu.
+    clearScreen();
+    printf("\nEnter customer code: ");
+    
+    while(1){
+
+        // Initialize string.
+        char buffer[CUSTOMER_CODE_LEN] = {' '};
+        if (!fgets(buffer, CUSTOMER_CODE_LEN, stdin)) {
+            clearScreen();
+            printf("\nInput error.\n");
+            printf("\nEnter customer code: ");
+            continue;
+        }
+
+        // Check if we exceeded the CUSTOMER_CODE_LEN.
+        if(!strchr(buffer, '\n')){
+            clearBuffer();
+            clearScreen();
+            printf("\nInvalid customer code!\n");
+            printf("\nEnter customer code: ");
+            continue;
+        } 
+
+        buffer[strlen(buffer) - 1] = '\0';
+        char *temp = buffer;
+        while(isspace(*temp)) ++temp;
+        if(strlen(temp) < 1){
+            clearScreen();
+            printf("\nNo input provided. Please enter a product name.\n");
+            printf("\nEnter customer code: ");
+            continue;
+        }
+        strcpy(customerCode, temp);
+        return;
+    }
+}
+
+void readCustomerName(char *customerCode, char *customerName){
+
+    // Print menu.
+    clearScreen();
+    printf("\nEnter customer code: %s\n", customerCode);
+    printf("Enter customer name: ");
+    
+    while(1){
+
+        // Initialize string.
+        char buffer[NAME_LENGTH] = {' '};
+        if (!fgets(buffer, NAME_LENGTH, stdin)) {
+            clearScreen();
+            printf("\nInput error.\n");
+            printf("\nEnter customer code: %s\n", customerCode);
+            printf("Enter customer name: ");
+            continue;
+        }
+
+        // Check if we exceeded the NAME_LENGTH.
+        if(!strchr(buffer, '\n')){
+            clearBuffer();
+            clearScreen();
+            printf("\nInvalid customer name!\n");
+            printf("\nEnter customer code: %s\n", customerCode);
+            printf("Enter customer name: ");
+            continue;
+        } 
+        
+        buffer[strlen(buffer) - 1] = '\0';
+        char *temp = buffer;
+        while(isspace(*temp)) ++temp;
+        if(strlen(temp) < 1){
+            clearScreen();
+            printf("\nNo input provided. Please enter a product name.\n");
+            printf("\nEnter customer code: %s\n", customerCode);
+            printf("Enter customer name: ");
+            continue;
+        }
+        strcpy(customerName, temp);
+        return;
+    }
+}
+
+void readPriority(char *customerCode, char *customerName, int *priority){
+
+    // Print menu.
+    clearScreen();
+    printf("\nEnter customer code: %s\n", customerCode);
+    printf("Enter customer name: %s\n", customerName);
+    printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+
+    // Check if input is valid, no extra characters after entering a number, etc.
+    while(1){
+
+        // Initialize string.
+        char buffer[BUFFER_SIZE] = {' '};
+        if (!fgets(buffer, BUFFER_SIZE, stdin)) {
+            clearScreen();
+            printf("\nInput error.\n");
+            printf("\nEnter customer code: %s\n", customerCode);
+            printf("Enter customer name: %s\n", customerName);
+            printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+            continue;
+        }
+
+        // Check if we exceeded the BUFFER_SIZE.
+        if(!strchr(buffer, '\n')){
+            clearBuffer();
+            clearScreen();
+            printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
+            printf("\nEnter customer code: %s\n", customerCode);
+            printf("Enter customer name: %s\n", customerName);
+            printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+            continue;
+        }
+
+        // Skip whitespace in the beginning. 
+        char *temp = buffer;
+        while(isspace(*temp)) ++temp;
+
+        // Check if it's a digit, if not just skip.
+        if(!isdigit(*temp)){
+            clearScreen();
+            printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
+            printf("\nEnter customer code: %s\n", customerCode);
+            printf("Enter customer name: %s\n", customerName);
+            printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+            continue;
+        }
+
+        // Get the whole number.
+        int index = 0;
+        char tempNumber[BUFFER_SIZE] = {' '};
+        while(index < (BUFFER_SIZE - 1) && isdigit(*temp)){
+            tempNumber[index] = *temp;
+            ++temp; ++index;
+        }
+        tempNumber[index] = '\0';
+        
+        // Check if there's anything else after the number.
+        while(isspace(*temp)) ++temp;
+        if(*temp == '\0'){
+            *priority = atoi(tempNumber);
+            if(!(*priority >= PRIORITY_MIN && *priority <= PRIORITY_MAX)){
+                clearScreen();
+                printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
+                printf("\nEnter customer code: %s\n", customerCode);
+                printf("Enter customer name: %s\n", customerName);
+                printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+                continue;
+            }
+            return;
+        } 
+        clearScreen();
+        printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
+        printf("\nEnter customer code: %s\n", customerCode);
+        printf("Enter customer name: %s\n", customerName);
+        printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+    }
+}
+
 void firstOptionScreen(){
 
 }
@@ -379,8 +550,17 @@ void fourthOptionScreen(){
 
 }
 
+void freeInventory(Product *inventory){
+    Product *current = inventory;
+    while(current){
+        Product *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
 // Run the program.
-int runMS(int option, Product **inventory){
+void runMS(int option, Product **inventory, OrderBucket *ob){
     switch (option){
     case 1:
         // Initialize variables.
@@ -406,21 +586,31 @@ int runMS(int option, Product **inventory){
         // Add product to the list;
         *inventory = insertProduct(*inventory, EAN, productName, quantity, price);
         break;
-        case 2:
-        secondOptionScreen();
+    case 2:
+      // Variables.
+        char customerCode[CUSTOMER_CODE_LEN];
+        char customerName[NAME_LENGTH];
+        int priority;
+
+        // Read the variables.
+        readCustomerCode(customerCode);
+        readCustomerName(customerCode, customerName);
+        readPriority(customerCode, customerName, &priority);
+
+        // Insert the order into the FIFO queue, based on priority.
+        insertNewOrder(customerCode, customerName, priority, ob);
         break;
-        case 3:
+    case 3:
         printInventory(*inventory);
-        thirdOptionScreen();
         break;
     case 4:
-        fourthOptionScreen();
+        tempPrintAllOrders(ob);
         break;
     default:
         printf("\nExiting Program. Goodbye!\n");
-        return 0;
+        break;
     }
-    return 1;
 }
+
 
 

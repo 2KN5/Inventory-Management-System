@@ -8,14 +8,13 @@
 #include <math.h>
 #include "common.h"
 #include "product.h"
+#include "orderQueue.h"
 
 // Check .c file for function explanations. 
 
 void mainMenu(int *number);
-void readProductName(char *EAN, char *str);
-int runMS(int option, Product **inventory);
+void runMS(int option, Product **inventory, OrderBucket *ob);
 
-void clearScreen();
-void pause();
+void freeInventory(Product *inventory);
 
 #endif 

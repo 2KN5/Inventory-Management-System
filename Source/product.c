@@ -24,37 +24,10 @@ void printMenu_7(Product *head, char *EAN){
     printf("\nSelect product number or 0 to cancel: ");
 }
 
-Product *insertProduct(Product *head, char *EAN, char *productName, int quantity, double price){
-    
-    // Allocate the new product we want to add to the list.
-    Product *newNode = malloc(sizeof(Product));
-    if(!newNode){
-        printf("Malloc failed!\n");
-        return head;
+void stringToLower(char *strToLower, char *str){
+    for(int i = 0; i < strlen(str); ++i){
+        strToLower[i] = tolower(str[i]);
     }
-    strcpy(newNode->EAN, EAN);
-    strcpy(newNode->productName, productName);
-    newNode->quantity = quantity;
-    newNode->price = price;
-    newNode->next = NULL;
-
-    // Add product to the list, sorted by EAN (Looks better).
-    
-    // Check if list is empty, or if the new product has a smaller EAN than the head.
-    if(head == NULL || strcmp(newNode->EAN, head->EAN) < 0){
-        newNode->next = head;
-        return newNode; // Return the new head.
-    }
-
-    // Otherwise.
-    Product *curr = head;
-    while(curr->next && strcmp(newNode->EAN, curr->next->EAN) > 0){
-        curr = curr->next;
-    }
-
-    newNode->next = curr->next;
-    curr->next = newNode;
-    return head;
 }
 
 void readQuantityToAdd(char *EAN, int *quantity){
@@ -124,28 +97,6 @@ void readQuantityToAdd(char *EAN, int *quantity){
     }
 }
 
-int updateProduct(Product *head, char *EAN){
-    // Check if product already exists
-    int quantity;
-    Product *curr = head;
-    while(curr){
-        if(strcmp(curr->EAN, EAN) == 0){
-            readQuantityToAdd(curr->EAN, &quantity);
-            curr->quantity += quantity;
-            printf("\nProduct quantity updated. New quantity: %d\n", curr->quantity);
-            return 1;
-        }
-        curr = curr->next;
-    }
-    return 0;
-} 
-
-void searchByEAN(){
-
-
-
-}
-
 void readProductNumber(Product *head, char *EAN, int totalProducts, int *productNumber){
 
     // Print menu.
@@ -213,6 +164,64 @@ void readProductNumber(Product *head, char *EAN, int totalProducts, int *product
     }
 }
 
+void readOption(Product *head, char *option){
+
+    // Print menu.
+    clearScreen();
+    printf("\nEnter code, name, or * to print all (e.g. 123, Milk, *): ");
+
+    while(1){
+
+        // Initialize string.
+        char buffer[NAME_LENGTH] = {' '};
+        if (!fgets(buffer, NAME_LENGTH, stdin)) {
+            clearScreen();
+            printf("\nInput error.\n");
+            printf("\nEnter code, name, or * to print all: "); 
+            continue;
+        }
+
+        // Check if we exceeded the NAME_LENGTH.
+        if(!strchr(buffer, '\n')){
+            clearBuffer();
+            clearScreen();
+            printf("\nInvalid statement! Please try again.\n");
+            printf("\nEnter code, name, or * to print all: "); 
+            continue;
+        } 
+
+        
+        // Different message for when the string is empty.
+        buffer[strlen(buffer) - 1] = '\0';
+        char *temp = buffer;
+        while(isspace(*temp)) ++temp;
+        if(strlen(temp) < 1){
+            clearScreen();
+            printf("\nNo input provided. Please enter a code, name, or *.\n");
+            printf("\nEnter code, name, or * to print all: "); 
+            continue;
+        }
+        strcpy(option, temp);
+        return;
+    }
+}
+
+int updateProduct(Product *head, char *EAN){
+    // Check if product already exists
+    int quantity;
+    Product *curr = head;
+    while(curr){
+        if(strcmp(curr->EAN, EAN) == 0){
+            readQuantityToAdd(curr->EAN, &quantity);
+            curr->quantity += quantity;
+            printf("\nProduct quantity updated. New quantity: %d\n", curr->quantity);
+            return 1;
+        }
+        curr = curr->next;
+    }
+    return 0;
+} 
+
 int suggestProduct(Product *head, char *EAN){
 
     // Check if the length of the EAN is between (4 - 12).
@@ -263,50 +272,37 @@ int suggestProduct(Product *head, char *EAN){
     return 1;
 }
 
-void readOption(Product *head, char *option){
-
-    // Print menu.
-    clearScreen();
-    printf("\nEnter code, name, or * to print all (e.g. 123, Milk, *): ");
-
-    while(1){
-
-        // Initialize string.
-        char buffer[NAME_LENGTH] = {' '};
-        if (!fgets(buffer, NAME_LENGTH, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printf("\nEnter code, name, or * to print all: "); 
-            continue;
-        }
-
-        // Check if we exceeded the NAME_LENGTH.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid statement! Please try again.\n");
-            printf("\nEnter code, name, or * to print all: "); 
-            continue;
-        } 
-
-        
-        // Different message for when the string is empty.
-        buffer[strlen(buffer) - 1] = '\0';
-        if(strlen(buffer) < 1){
-            clearScreen();
-            printf("\nNo input provided. Please enter a code, name, or *.\n");
-            printf("\nEnter code, name, or * to print all: "); 
-            continue;
-        }
-        strcpy(option, buffer);
-        return;
+Product *insertProduct(Product *head, char *EAN, char *productName, int quantity, double price){
+    
+    // Allocate the new product we want to add to the list.
+    Product *newNode = malloc(sizeof(Product));
+    if(!newNode){
+        printf("Malloc failed!\n");
+        return head;
     }
-}
+    strcpy(newNode->EAN, EAN);
+    strcpy(newNode->productName, productName);
+    newNode->quantity = quantity;
+    newNode->price = price;
+    newNode->next = NULL;
 
-void stringToLower(char *strToLower, char *str){
-    for(int i = 0; i < strlen(str); ++i){
-        strToLower[i] = tolower(str[i]);
+    // Add product to the list, sorted by EAN (Looks better).
+    
+    // Check if list is empty, or if the new product has a smaller EAN than the head.
+    if(head == NULL || strcmp(newNode->EAN, head->EAN) < 0){
+        newNode->next = head;
+        return newNode; // Return the new head.
     }
+
+    // Otherwise.
+    Product *curr = head;
+    while(curr->next && strcmp(newNode->EAN, curr->next->EAN) > 0){
+        curr = curr->next;
+    }
+
+    newNode->next = curr->next;
+    curr->next = newNode;
+    return head;
 }
 
 void printInventory(Product *head){

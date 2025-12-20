@@ -20,9 +20,8 @@ typedef struct Product {
 
 // Check .c file for function explanations. 
 
-void searchByEAN();
-int suggestProduct(Product *head, char *EAN);
 Product *insertProduct(Product *head, char *EAN, char *productName, int quantity, double price);
+int suggestProduct(Product *head, char *EAN);
 int updateProduct(Product *head, char *EAN);
 void printInventory(Product *head);
 
