@@ -47,6 +47,30 @@ void printMenu_5(char *EAN, char *productName, int quantity){
     printf("Enter price: ");
 }
 
+void printMenu_6(){
+    printf("\n================================================\n");
+    printf("             INSERT NEW ORDER\n");
+    printf("================================================\n");
+    printf("\nEnter customer code: ");
+}
+
+void printMenu_7(char *customerCode){
+    printf("\n================================================\n");
+    printf("             INSERT NEW ORDER\n");
+    printf("================================================\n");
+    printf("\nEnter customer code: %s\n", customerCode);
+    printf("Enter customer name: ");
+}
+
+void printMenu_8(char *customerCode, char *customerName){
+    printf("\n================================================\n");
+    printf("             INSERT NEW ORDER\n");
+    printf("================================================\n");
+    printf("\nEnter customer code: %s\n", customerCode);
+    printf("Enter customer name: %s\n", customerName);
+    printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+}
+
 void mainMenu(int *number){
     
     // Print menu.
@@ -387,11 +411,8 @@ void readCustomerCode(char *customerCode){
 
     // Print menu.
     clearScreen();
-    printf("\n================================================\n");
-    printf("             INSERT NEW ORDER\n");
-    printf("================================================\n");
-    printf("\nEnter customer code: ");
-    
+    printMenu_6();
+
     while(1){
 
         // Initialize string.
@@ -399,10 +420,7 @@ void readCustomerCode(char *customerCode){
         if (!fgets(buffer, CUSTOMER_CODE_LEN, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: ");
+            printMenu_6();
             continue;
         }
 
@@ -411,10 +429,7 @@ void readCustomerCode(char *customerCode){
             clearBuffer();
             clearScreen();
             printf("\nInvalid customer code!\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: ");
+            printMenu_6();
             continue;
         } 
 
@@ -424,10 +439,7 @@ void readCustomerCode(char *customerCode){
         if(strlen(temp) < 1){
             clearScreen();
             printf("\nNo input provided. Please enter a product name.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: ");
+            printMenu_6();
             continue;
         }
         strcpy(customerCode, temp);
@@ -439,12 +451,8 @@ void readCustomerName(char *customerCode, char *customerName){
 
     // Print menu.
     clearScreen();
-    printf("\n================================================\n");
-    printf("             INSERT NEW ORDER\n");
-    printf("================================================\n");
-    printf("\nEnter customer code: %s\n", customerCode);
-    printf("Enter customer name: ");
-    
+    printMenu_7(customerCode);
+
     while(1){
 
         // Initialize string.
@@ -452,11 +460,7 @@ void readCustomerName(char *customerCode, char *customerName){
         if (!fgets(buffer, NAME_LENGTH, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: ");
+            printMenu_7(customerCode);
             continue;
         }
 
@@ -465,11 +469,7 @@ void readCustomerName(char *customerCode, char *customerName){
             clearBuffer();
             clearScreen();
             printf("\nInvalid customer name!\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: ");
+            printMenu_7(customerCode);
             continue;
         } 
         
@@ -479,11 +479,7 @@ void readCustomerName(char *customerCode, char *customerName){
         if(strlen(temp) < 1){
             clearScreen();
             printf("\nNo input provided. Please enter a product name.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: ");
+            printMenu_7(customerCode);
             continue;
         }
         strcpy(customerName, temp);
@@ -495,12 +491,7 @@ void readPriority(char *customerCode, char *customerName, int *priority){
 
     // Print menu.
     clearScreen();
-    printf("\n================================================\n");
-    printf("             INSERT NEW ORDER\n");
-    printf("================================================\n");
-    printf("\nEnter customer code: %s\n", customerCode);
-    printf("Enter customer name: %s\n", customerName);
-    printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+    printMenu_8(customerCode, customerName);
 
     // Check if input is valid, no extra characters after entering a number, etc.
     while(1){
@@ -510,12 +501,7 @@ void readPriority(char *customerCode, char *customerName, int *priority){
         if (!fgets(buffer, BUFFER_SIZE, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+            printMenu_8(customerCode, customerName);
             continue;
         }
 
@@ -524,12 +510,7 @@ void readPriority(char *customerCode, char *customerName, int *priority){
             clearBuffer();
             clearScreen();
             printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+            printMenu_8(customerCode, customerName);
             continue;
         }
 
@@ -541,12 +522,7 @@ void readPriority(char *customerCode, char *customerName, int *priority){
         if(!isdigit(*temp)){
             clearScreen();
             printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+            printMenu_8(customerCode, customerName);
             continue;
         }
 
@@ -566,24 +542,14 @@ void readPriority(char *customerCode, char *customerName, int *priority){
             if(!(*priority >= PRIORITY_MIN && *priority <= PRIORITY_MAX)){
                 clearScreen();
                 printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-                printf("\n================================================\n");
-                printf("             INSERT NEW ORDER\n");
-                printf("================================================\n");
-                printf("\nEnter customer code: %s\n", customerCode);
-                printf("Enter customer name: %s\n", customerName);
-                printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+                printMenu_8(customerCode, customerName);
                 continue;
             }
             return;
         } 
         clearScreen();
         printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-        printf("\n================================================\n");
-        printf("             INSERT NEW ORDER\n");
-        printf("================================================\n");
-        printf("\nEnter customer code: %s\n", customerCode);
-        printf("Enter customer name: %s\n", customerName);
-        printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
+        printMenu_8(customerCode, customerName);
     }
 }
 

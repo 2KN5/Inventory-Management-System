@@ -1,10 +1,6 @@
 #include "orderQueue.h"
 
-// Read item EAN.
-void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int priority, int count){
-
-    // Print menu.
-    clearScreen();
+void printMenu_13(char *customerCode, char *customerName, int priority, int count){
     printf("\n================================================\n");
     printf("             INSERT NEW ORDER\n");
     printf("================================================\n");    
@@ -14,6 +10,27 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
     printf("\n================================================\n\n");
     printf("Current items in order: %d\n\n", count);
     printf("Enter product EAN (or 0 to finish): ");
+}
+
+void printMenu_14(char *customerCode, char *customerName, int priority, int count, char *itemEAN){
+    printf("\n================================================\n");
+    printf("             INSERT NEW ORDER\n");
+    printf("================================================\n");
+    printf("\nEnter customer code: %s\n", customerCode);
+    printf("Enter customer name: %s\n", customerName);
+    printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
+    printf("\n================================================\n\n");
+    printf("Current items in order: %d\n\n", count);
+    printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
+    printf("Enter quantity: ");
+}
+
+// Read item EAN.
+void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int priority, int count){
+
+    // Print menu.
+    clearScreen();
+    printMenu_13(customerCode, customerName, priority, count);
 
     // Check for valid EAN.
     while(1){
@@ -23,15 +40,7 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
         if (!fgets(buffer, EAN_BUF, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");    
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n================================================\n\n");
-            printf("Current items in order: %d\n\n", count);
-            printf("Enter product EAN (or 0 to finish): ");
+            printMenu_13(customerCode, customerName, priority, count);
             continue;
         }
 
@@ -40,15 +49,7 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
             clearBuffer();
             clearScreen();
             printf("\nInvalid EAN. Has to be 13 characters long.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");    
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n================================================\n\n");
-            printf("Current items in order: %d\n\n", count);
-            printf("Enter product EAN (or 0 to finish): ");
+            printMenu_13(customerCode, customerName, priority, count);
             continue;
         }
 
@@ -60,15 +61,7 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
         if(!isdigit(*temp)){
             clearScreen();
             printf("\nInvalid EAN. Has to be 13 characters long.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");    
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n================================================\n\n");
-            printf("Current items in order: %d\n\n", count);
-            printf("Enter product EAN (or 0 to finish): ");
+            printMenu_13(customerCode, customerName, priority, count);
             continue;
         }
 
@@ -88,15 +81,7 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
             if(length != EAN_MAX_DIGITS && strcmp(tempValue, "0") != 0){
                 clearScreen();
                 printf("\nInvalid EAN. Has to be 13 characters long.\n");
-                printf("\n================================================\n");
-                printf("             INSERT NEW ORDER\n");
-                printf("================================================\n");    
-                printf("\nEnter customer code: %s\n", customerCode);
-                printf("Enter customer name: %s\n", customerName);
-                printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-                printf("\n================================================\n\n");
-                printf("Current items in order: %d\n\n", count);
-                printf("Enter product EAN (or 0 to finish): ");
+                printMenu_13(customerCode, customerName, priority, count);
                 continue;
             }
             strcpy(itemEAN, tempValue);
@@ -104,15 +89,7 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
         } 
         clearScreen();
         printf("\nInvalid EAN. Has to be 13 characters long.\n");
-        printf("\n================================================\n");
-        printf("             INSERT NEW ORDER\n");
-        printf("================================================\n");    
-        printf("\nEnter customer code: %s\n", customerCode);
-        printf("Enter customer name: %s\n", customerName);
-        printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-        printf("\n================================================\n\n");
-        printf("Current items in order: %d\n\n", count);
-        printf("Enter product EAN (or 0 to finish): ");
+        printMenu_13(customerCode, customerName, priority, count);
     }
 }
 
@@ -121,16 +98,7 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
 
     // Print menu.
     clearScreen();
-    printf("\n================================================\n");
-    printf("             INSERT NEW ORDER\n");
-    printf("================================================\n");
-    printf("\nEnter customer code: %s\n", customerCode);
-    printf("Enter customer name: %s\n", customerName);
-    printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-    printf("\n================================================\n\n");
-    printf("Current items in order: %d\n\n", count);
-    printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
-    printf("Enter quantity: ");
+    printMenu_14(customerCode, customerName, priority, count, itemEAN);
 
     // Check for valid Quantity.
     while(1){
@@ -140,16 +108,7 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
         if (!fgets(buffer, BUFFER_SIZE, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n================================================\n\n");
-            printf("Current items in order: %d\n\n", count);
-            printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
-            printf("Enter quantity: ");
+            printMenu_14(customerCode, customerName, priority, count, itemEAN);
             continue;
         }
 
@@ -158,16 +117,7 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
             clearBuffer();
             clearScreen();
             printf("\nInvalid quantity. Please try again.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n================================================\n\n");
-            printf("Current items in order: %d\n\n", count);
-            printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
-            printf("Enter quantity: ");
+            printMenu_14(customerCode, customerName, priority, count, itemEAN);
             continue;
         }
 
@@ -179,16 +129,7 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
         if(!isdigit(*temp)){
             clearScreen();
             printf("\nInvalid quantity. Please try again.\n");
-            printf("\n================================================\n");
-            printf("             INSERT NEW ORDER\n");
-            printf("================================================\n");
-            printf("\nEnter customer code: %s\n", customerCode);
-            printf("Enter customer name: %s\n", customerName);
-            printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n================================================\n\n");
-            printf("Current items in order: %d\n\n", count);
-            printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
-            printf("Enter quantity: ");
+            printMenu_14(customerCode, customerName, priority, count, itemEAN);
             continue;
         }
 
@@ -208,16 +149,7 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
             if(length >= QTY_MAX_DIGITS){
                 clearScreen();
                 printf("\nInvalid quantity. Please try again.\n");
-                printf("\n================================================\n");
-                printf("             INSERT NEW ORDER\n");
-                printf("================================================\n");
-                printf("\nEnter customer code: %s\n", customerCode);
-                printf("Enter customer name: %s\n", customerName);
-                printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-                printf("\n================================================\n\n");
-                printf("Current items in order: %d\n\n", count);
-                printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
-                printf("Enter quantity: ");
+                printMenu_14(customerCode, customerName, priority, count, itemEAN);
                 continue;
             }
             *quantity = atoi(tempValue);
@@ -225,16 +157,7 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
         } 
         clearScreen();
         printf("\nInvalid quantity. Please try again.\n");
-        printf("\n================================================\n");
-        printf("             INSERT NEW ORDER\n");
-        printf("================================================\n");
-        printf("\nEnter customer code: %s\n", customerCode);
-        printf("Enter customer name: %s\n", customerName);
-        printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-        printf("\n================================================\n\n");
-        printf("Current items in order: %d\n\n", count);
-        printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
-        printf("Enter quantity: ");
+        printMenu_14(customerCode, customerName, priority, count, itemEAN);
     }
 }
 
