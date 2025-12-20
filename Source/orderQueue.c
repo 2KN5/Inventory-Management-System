@@ -5,10 +5,13 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
 
     // Print menu.
     clearScreen();
+    printf("\n================================================\n");
+    printf("             INSERT NEW ORDER\n");
+    printf("================================================\n");    
     printf("\nEnter customer code: %s\n", customerCode);
     printf("Enter customer name: %s\n", customerName);
     printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-    printf("\n============================================\n\n");
+    printf("\n================================================\n\n");
     printf("Current items in order: %d\n\n", count);
     printf("Enter product EAN (or 0 to finish): ");
 
@@ -20,10 +23,13 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
         if (!fgets(buffer, EAN_BUF, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
+            printf("\n================================================\n");
+            printf("             INSERT NEW ORDER\n");
+            printf("================================================\n");    
             printf("\nEnter customer code: %s\n", customerCode);
             printf("Enter customer name: %s\n", customerName);
             printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n============================================\n\n");
+            printf("\n================================================\n\n");
             printf("Current items in order: %d\n\n", count);
             printf("Enter product EAN (or 0 to finish): ");
             continue;
@@ -34,10 +40,13 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
             clearBuffer();
             clearScreen();
             printf("\nInvalid EAN. Has to be 13 characters long.\n");
+            printf("\n================================================\n");
+            printf("             INSERT NEW ORDER\n");
+            printf("================================================\n");    
             printf("\nEnter customer code: %s\n", customerCode);
             printf("Enter customer name: %s\n", customerName);
             printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n============================================\n\n");
+            printf("\n================================================\n\n");
             printf("Current items in order: %d\n\n", count);
             printf("Enter product EAN (or 0 to finish): ");
             continue;
@@ -51,10 +60,13 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
         if(!isdigit(*temp)){
             clearScreen();
             printf("\nInvalid EAN. Has to be 13 characters long.\n");
+            printf("\n================================================\n");
+            printf("             INSERT NEW ORDER\n");
+            printf("================================================\n");    
             printf("\nEnter customer code: %s\n", customerCode);
             printf("Enter customer name: %s\n", customerName);
             printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n============================================\n\n");
+            printf("\n================================================\n\n");
             printf("Current items in order: %d\n\n", count);
             printf("Enter product EAN (or 0 to finish): ");
             continue;
@@ -76,10 +88,13 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
             if(length != EAN_MAX_DIGITS && strcmp(tempValue, "0") != 0){
                 clearScreen();
                 printf("\nInvalid EAN. Has to be 13 characters long.\n");
+                printf("\n================================================\n");
+                printf("             INSERT NEW ORDER\n");
+                printf("================================================\n");    
                 printf("\nEnter customer code: %s\n", customerCode);
                 printf("Enter customer name: %s\n", customerName);
                 printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-                printf("\n============================================\n\n");
+                printf("\n================================================\n\n");
                 printf("Current items in order: %d\n\n", count);
                 printf("Enter product EAN (or 0 to finish): ");
                 continue;
@@ -89,10 +104,13 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
         } 
         clearScreen();
         printf("\nInvalid EAN. Has to be 13 characters long.\n");
+        printf("\n================================================\n");
+        printf("             INSERT NEW ORDER\n");
+        printf("================================================\n");    
         printf("\nEnter customer code: %s\n", customerCode);
         printf("Enter customer name: %s\n", customerName);
         printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-        printf("\n============================================\n\n");
+        printf("\n================================================\n\n");
         printf("Current items in order: %d\n\n", count);
         printf("Enter product EAN (or 0 to finish): ");
     }
@@ -103,10 +121,13 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
 
     // Print menu.
     clearScreen();
+    printf("\n================================================\n");
+    printf("             INSERT NEW ORDER\n");
+    printf("================================================\n");
     printf("\nEnter customer code: %s\n", customerCode);
     printf("Enter customer name: %s\n", customerName);
     printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-    printf("\n============================================\n\n");
+    printf("\n================================================\n\n");
     printf("Current items in order: %d\n\n", count);
     printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
     printf("Enter quantity: ");
@@ -119,10 +140,13 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
         if (!fgets(buffer, BUFFER_SIZE, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
+            printf("\n================================================\n");
+            printf("             INSERT NEW ORDER\n");
+            printf("================================================\n");
             printf("\nEnter customer code: %s\n", customerCode);
             printf("Enter customer name: %s\n", customerName);
             printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n============================================\n\n");
+            printf("\n================================================\n\n");
             printf("Current items in order: %d\n\n", count);
             printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
             printf("Enter quantity: ");
@@ -134,10 +158,13 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
             clearBuffer();
             clearScreen();
             printf("\nInvalid quantity. Please try again.\n");
+            printf("\n================================================\n");
+            printf("             INSERT NEW ORDER\n");
+            printf("================================================\n");
             printf("\nEnter customer code: %s\n", customerCode);
             printf("Enter customer name: %s\n", customerName);
             printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n============================================\n\n");
+            printf("\n================================================\n\n");
             printf("Current items in order: %d\n\n", count);
             printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
             printf("Enter quantity: ");
@@ -152,10 +179,13 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
         if(!isdigit(*temp)){
             clearScreen();
             printf("\nInvalid quantity. Please try again.\n");
+            printf("\n================================================\n");
+            printf("             INSERT NEW ORDER\n");
+            printf("================================================\n");
             printf("\nEnter customer code: %s\n", customerCode);
             printf("Enter customer name: %s\n", customerName);
             printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-            printf("\n============================================\n\n");
+            printf("\n================================================\n\n");
             printf("Current items in order: %d\n\n", count);
             printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
             printf("Enter quantity: ");
@@ -178,10 +208,13 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
             if(length >= QTY_MAX_DIGITS){
                 clearScreen();
                 printf("\nInvalid quantity. Please try again.\n");
+                printf("\n================================================\n");
+                printf("             INSERT NEW ORDER\n");
+                printf("================================================\n");
                 printf("\nEnter customer code: %s\n", customerCode);
                 printf("Enter customer name: %s\n", customerName);
                 printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-                printf("\n============================================\n\n");
+                printf("\n================================================\n\n");
                 printf("Current items in order: %d\n\n", count);
                 printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
                 printf("Enter quantity: ");
@@ -192,10 +225,13 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
         } 
         clearScreen();
         printf("\nInvalid quantity. Please try again.\n");
+        printf("\n================================================\n");
+        printf("             INSERT NEW ORDER\n");
+        printf("================================================\n");
         printf("\nEnter customer code: %s\n", customerCode);
         printf("Enter customer name: %s\n", customerName);
         printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
-        printf("\n============================================\n\n");
+        printf("\n================================================\n\n");
         printf("Current items in order: %d\n\n", count);
         printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
         printf("Enter quantity: ");
@@ -290,31 +326,42 @@ Order *dequeueOBNext(OrderBucket *ob){
 
 // Free all order item nodes, then the order itself.
 void freeOrder(Order *order){
+    if(!order) return;
     OrderItem *current = order->items;
     while(current){
         OrderItem *next = current->next;
         free(current);
         current = next;
     }
-    free(order);
+    order->items = NULL;
 }
 
-// Free the entire order bucket
+// Free the entire order bucket.
 void freeOrderBucket(OrderBucket *ob){
     for(int i = PRIORITY_MIN; i <= PRIORITY_MAX; ++i){
         Order *order;
-        while((order = dequeue(&ob->buckets[i])) != NULL){
-            freeOrder(order);
-        }
+        while((order = dequeue(&ob->buckets[i])) != NULL) free(order);
     }
 }
 
-void tempPrintAllOrders(OrderBucket *ob){
+// Find product name by EAN.
+Product* findItemByEAN(const char *ean, Product *inventory){
+    if(!ean || !inventory) return NULL;
+    Product *current = inventory;
+    while(current != NULL){
+        if(strcmp(current->EAN, ean) == 0) return current;
+        current = current->next;
+    }
+    return NULL; 
+}
+
+// Print all orders.
+void printAllOrders(OrderBucket *ob, Product *inventory){
 
     // Clear the screen.
     clearScreen();
 
-    // Check if the order bucket is empty.
+    // Check if order bucket is empty.
     if(isOBEmpty(ob)){
         printf("\n============================================\n\n");
         printf("Order Queue Status: EMPTY\n");
@@ -323,23 +370,110 @@ void tempPrintAllOrders(OrderBucket *ob){
         return;
     }
 
-    // If not, print all orders.
+    // If not execute orders.
     printf("\n============= Executing Orders =============\n\n");
-    for(int i = PRIORITY_MAX; i >= PRIORITY_MIN; --i){
-        Order *order;
-        while((order = dequeueOBNext(ob)) != NULL){
-            printf("Customer: %s (Code: %s)\n", order->customerName, order->customerCode);
-            printf("Priority: %d\n\n", order->priority);
-            printf("| %-15s | %-10s | %-10s | %-10s | %-10s |\n", "Product", "Requested", "Fulfilled", "Unit Price", "Total");
-            printf("|-----------------|------------|------------|------------|------------|\n");
-            OrderItem *temp = order->items;
-            while(temp){
-                printf("| %-15s | %-10d | %-10d | %-10.2f | %-10.2f |\n", 
-                    temp->EAN, temp->quantity, 0, 0, 0);
-                temp = temp->next;
+
+    Order *order;
+    int orderCount = 0;
+    while((order = dequeueOBNext(ob)) != NULL){
+        orderCount++;
+
+        printf("Customer: %s (Code: %s)\n", order->customerName, order->customerCode);
+        printf("Priority: %d\n\n", order->priority);
+        printf("| %-15s | %-10s | %-10s | %-10s | %-10s |\n", 
+               "Product", "Requested", "Fulfilled", "Unit Price", "Total");
+        printf("|-----------------|------------|------------|------------|------------|\n");
+
+        char parFul[MAX_ITEMS][NAME_LENGTH];
+        char outOfStockNames[MAX_ITEMS][NAME_LENGTH];
+        char notFoundEANs[MAX_ITEMS][EAN_BUF];
+        int pfCount = 0, osCount = 0, nfCount = 0;
+        double orderTotal = 0.0;
+
+        OrderItem *currItem = order->items;
+        while(currItem){
+
+            // Find item by EAN, inside the inventory.
+            Product *itemFound = findItemByEAN(currItem->EAN, inventory);
+            if(!itemFound){
+                strcpy(notFoundEANs[nfCount], currItem->EAN);
+                ++nfCount; 
+                currItem = currItem->next;
+                continue;
             }
-            printf("|-----------------|------------|------------|------------|------------|\n\n");
+
+            // If found, check if it's in stock.
+            if(itemFound->quantity == 0){
+                strcpy(outOfStockNames[osCount], itemFound->productName);
+                ++osCount;
+                currItem = currItem->next;
+                continue;
+            }
+
+            // Calculate fulfillment.
+            int ffQuantity;
+            int reqQuantity = currItem->quantity;
+            int avQuantity = itemFound->quantity;
+
+            // Check if requested quantity is less than the available.
+            if(reqQuantity <= avQuantity){
+                ffQuantity = reqQuantity;
+                itemFound->quantity -= reqQuantity;
+            } else {
+                ffQuantity = avQuantity;
+                strcpy(parFul[pfCount], itemFound->productName);
+                ++pfCount;
+                itemFound->quantity = 0;
+            }
+            
+            double itemTotal = ffQuantity * itemFound->price;
+            orderTotal += itemTotal;
+
+            // Print the product row.
+            printf("| %-15s | %-10d | %-10d | %-10.2f | %-10.2f |\n", 
+                   itemFound->productName, reqQuantity, ffQuantity, itemFound->price, itemTotal);
+
+            currItem = currItem->next;
         }
+        
+        printf("|-----------------|------------|------------|------------|------------|\n");
+        
+        // Print order total.
+        printf("\nOrder Total: $%.2f\n", orderTotal);
+        
+        // Print partial fulfillment warnings.
+        if(pfCount > 0){
+            printf("\nWARNING: Partial fulfillment for: ");
+            for(int i = 0; i < pfCount; i++){
+                printf("%s%s", parFul[i], (i < pfCount-1) ? ", " : "\n");
+            }
+        }
+        
+        // Out of stock warnings.
+        if(osCount > 0){
+            printf("\nProducts out of stock:\n");
+            for(int i = 0; i < osCount; i++){
+                printf("- %s\n", outOfStockNames[i]);
+            }
+        }
+        
+        // Product not found by EAN warnings.
+        if(nfCount > 0){
+            printf("\nProducts not found (By EAN):\n");
+            for(int i = 0; i < nfCount; i++){
+                printf("- %s\n", notFoundEANs[i]);
+            }
+        }
+        
+        printf("\n============================================\n\n");
+        
+        // Free the order.
+        freeOrder(order);
+        free(order);
+    }
+    
+    if(orderCount > 0){
+        printf("Executed %d order(s) successfully.\n", orderCount);
     }
 }
 
@@ -405,7 +539,7 @@ void insertNewOrder(char *customerCode, char *customerName, int priority, OrderB
         }
     }
     if(!head){
-        printf("\n============================================\n\n");
+        printf("\n================================================\n\n");
         printf("No items entered. Order cancelled.\n");
         free(newOrder);
         return;
@@ -414,6 +548,6 @@ void insertNewOrder(char *customerCode, char *customerName, int priority, OrderB
     // If the list is not empty, add it to the buckets, based on priority.
     newOrder->items = head;
     enqueueOB(ob, newOrder);
-    printf("\n============================================\n\n");
+    printf("\n================================================\n\n");
     printf("Order inserted successfully.\n");
 }

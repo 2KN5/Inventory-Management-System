@@ -1,16 +1,21 @@
 #include "product.h"
 
 void printMenu_6(char *EAN){
-    printf("\n=======================================\n\n");
+    printf("\n================================================\n");
+    printf("         INSERT / UPDATE PRODUCT\n");
+    printf("================================================\n\n");
     printf("Enter product EAN: %s\n", EAN);
     printf("Product already exists.\n");
     printf("Enter quantity to add: ");
 }
 
 void printMenu_7(Product *head, char *EAN){
-    printf("\n=======================================\n\n");
+    printf("\n================================================\n");
+    printf("         INSERT / UPDATE PRODUCT\n");
+    printf("================================================\n\n");
     printf("Enter product EAN: %s\n", EAN);
     printf("EAN incomplete.\n");
+    printf("\n================================================\n");
     printf("\nMatching products:\n");
     int count = 1;
     Product *temp = head;
@@ -168,6 +173,9 @@ void readOption(Product *head, char *option){
 
     // Print menu.
     clearScreen();
+    printf("\n================================================\n");
+    printf("                 INVENTORY\n");
+    printf("================================================\n");
     printf("\nEnter code, name, or * to print all (e.g. 123, Milk, *): ");
 
     while(1){
@@ -177,7 +185,10 @@ void readOption(Product *head, char *option){
         if (!fgets(buffer, NAME_LENGTH, stdin)) {
             clearScreen();
             printf("\nInput error.\n");
-            printf("\nEnter code, name, or * to print all: "); 
+            printf("\n================================================\n");
+            printf("                 INVENTORY\n");
+            printf("================================================\n");
+            printf("\nEnter code, name, or * to print all (e.g. 123, Milk, *): ");
             continue;
         }
 
@@ -186,7 +197,10 @@ void readOption(Product *head, char *option){
             clearBuffer();
             clearScreen();
             printf("\nInvalid statement! Please try again.\n");
-            printf("\nEnter code, name, or * to print all: "); 
+            printf("\n================================================\n");
+            printf("                 INVENTORY\n");
+            printf("================================================\n");
+            printf("\nEnter code, name, or * to print all (e.g. 123, Milk, *): ");
             continue;
         } 
 
@@ -198,7 +212,10 @@ void readOption(Product *head, char *option){
         if(strlen(temp) < 1){
             clearScreen();
             printf("\nNo input provided. Please enter a code, name, or *.\n");
-            printf("\nEnter code, name, or * to print all: "); 
+            printf("\n================================================\n");
+            printf("                 INVENTORY\n");
+            printf("================================================\n");
+            printf("\nEnter code, name, or * to print all (e.g. 123, Milk, *): ");
             continue;
         }
         strcpy(option, temp);
@@ -214,6 +231,7 @@ int updateProduct(Product *head, char *EAN){
         if(strcmp(curr->EAN, EAN) == 0){
             readQuantityToAdd(curr->EAN, &quantity);
             curr->quantity += quantity;
+            printf("\n================================================\n");
             printf("\nProduct quantity updated. New quantity: %d\n", curr->quantity);
             return 1;
         }
@@ -254,9 +272,12 @@ int suggestProduct(Product *head, char *EAN){
         // If we have no matching products.
         if(!head || totalEanCount == 0){
             clearScreen();
-            printf("\n=======================================\n\n");
+            printf("\n================================================\n");
+            printf("         INSERT / UPDATE PRODUCT\n");
+            printf("================================================\n\n");
             printf("Enter product EAN: %s\n", EAN);
             printf("EAN incomplete.\n");
+            printf("\n================================================\n");
             printf("\nNo matching products found!\n");
             return 0;
         }
@@ -324,7 +345,9 @@ void printInventory(Product *head){
 
     // Print the product list.
     if(totalProducts == 0){
-        printf("\nList is empty! Please insert some products.\n");
+        printf("\n----------------------------------------------------------\n\n");
+        printf("List is empty! Please insert some products.\n\n");
+        printf("----------------------------------------------------------\n");
         return;
     }
     printf("\n%-13s %-15s %-10s %-10s\n", "EAN", "Name", "Quantity", "Price");
@@ -373,4 +396,5 @@ void printInventory(Product *head){
             product = product->next;
         }
     }
+    printf("----------------------------------------------------------\n");
 }

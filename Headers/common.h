@@ -28,7 +28,9 @@ static inline void clearBuffer(){
 #define EAN_BUF 15
 #define NAME_LENGTH 32
 #define BUFFER_SIZE 64
-#define CUSTOMER_CODE_LEN 10
+#define CUSTOMER_CODE_LEN 20
+
+#define MAX_ITEMS 200
 
 #define OPTION_MAX 5
 #define OPTION_MIN 1

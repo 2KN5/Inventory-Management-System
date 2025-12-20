@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "common.h"
+#include "product.h"
 
 typedef struct OrderItem {
     char EAN[EAN_BUF];
@@ -45,6 +46,6 @@ void insertNewOrder(char *customerCode, char *customerName, int priority, OrderB
 void freeOrder(Order *order);
 void freeOrderBucket(OrderBucket *ob);
 
-void tempPrintAllOrders(OrderBucket *ob);
+void printAllOrders(OrderBucket *ob, Product *inventory);
 
 #endif 
