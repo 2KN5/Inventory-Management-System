@@ -11,15 +11,14 @@
 // Forward declarations to avoid circular dependencies.
 typedef struct Product Product;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Structs.
-
+// Individual product item within an order
 typedef struct OrderItem {
     char EAN[EAN_BUF];
     int quantity;
     struct OrderItem *next; // Linked list.
 } OrderItem;
 
+// Complete customer order with items.
 typedef struct Order {
     char customerCode[CUSTOMER_CODE_LEN];
     char customerName[NAME_LENGTH];
@@ -28,16 +27,16 @@ typedef struct Order {
     struct Order *next; // For queue linkage.
 } Order;
 
+// FIFO queue for order processing.
 typedef struct Queue {
     Order *front;
     Order *rear;
 } Queue;
 
+// Array of priority based queues.
 typedef struct OrderBucket {
     Queue buckets[PRIORITY_MAX + 1]; // Priority is set to be 1-10.
 } OrderBucket;
-
-/////////////////////////////////////////////////////////////////////////////////////////
 
 // Check .c file for function explanations. 
 
