@@ -1,6 +1,6 @@
-#include "common.h"
 #include "orderQueue.h"
 #include "product.h"
+#include "common.h"
 #include "utils.h"
 
 /*
@@ -28,10 +28,20 @@ int main(void){
     }
     initializeOB(ob); 
 
+    
     // Run the program.
     do {
         mainMenu(&option);
-        runMS(option, &inventory, ob);
+        
+        MenuParameters *par = malloc(sizeof(*par));
+        if(!par){
+            printf("Malloc failed for MenuParameters!\n");
+            continue;
+        }
+
+        runMS(option, &inventory, ob, par); 
+        free(par);
+
         if(option != 5) pause();
     } while(option != 5);
 

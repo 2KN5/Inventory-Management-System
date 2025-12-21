@@ -5,8 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
 #include "common.h"
-#include "product.h"
+
+// Forward declarations to avoid circular dependencies.
+typedef struct Product Product;
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// Structs.
 
 typedef struct OrderItem {
     char EAN[EAN_BUF];
@@ -31,21 +37,23 @@ typedef struct OrderBucket {
     Queue buckets[PRIORITY_MAX + 1]; // Priority is set to be 1-10.
 } OrderBucket;
 
+/////////////////////////////////////////////////////////////////////////////////////////
+
 // Check .c file for function explanations. 
 
 int isEmpty(Queue *queue);
-void initializeQueue(Queue *q);
-void enqueue(Queue *queue, Order *order);
-void initializeOB(OrderBucket *ob);
-void enqueueOB(OrderBucket *ob, Order *order);
 Order *dequeue(Queue *queue);
-Order *dequeueOB(OrderBucket *ob, int priority);
+void initializeQueue(Queue *q);
+void initializeOB(OrderBucket *ob);
 Order *dequeueOBNext(OrderBucket *ob);
+void enqueue(Queue *queue, Order *order);
+void enqueueOB(OrderBucket *ob, Order *order);
+Order *dequeueOB(OrderBucket *ob, int priority);
 
-void insertNewOrder(char *customerCode, char *customerName, int priority, OrderBucket *ob);
 void freeOrder(Order *order);
 void freeOrderBucket(OrderBucket *ob);
+void insertNewOrder(MenuParameters *par, char *customerCode, char *customerName, int priority, OrderBucket *ob);
 
 void printAllOrders(OrderBucket *ob, Product *inventory);
 
-#endif 
+#endif

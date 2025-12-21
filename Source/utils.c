@@ -1,6 +1,8 @@
+#include "orderQueue.h"   
+#include "product.h"      
 #include "utils.h"
 
-void printMenu_1(){
+void printMenu_1(MenuParameters *par){
     printf("\n================================================\n");
     printf("         INVENTORY MANAGEMENT SYSTEM\n");
     printf("================================================\n\n");
@@ -13,90 +15,109 @@ void printMenu_1(){
     printf("Select option: ");
 }
 
-void printMenu_2(){
+void printMenu_2(MenuParameters *par){
     printf("\n================================================\n");
     printf("         INSERT / UPDATE PRODUCT\n");
     printf("================================================\n\n");
     printf("Enter product EAN: ");
 }
 
-void printMenu_3(char *EAN){
+void printMenu_3(MenuParameters *par){
     printf("\n================================================\n");
     printf("         INSERT / UPDATE PRODUCT\n");
     printf("================================================\n\n");
-    printf("Enter product EAN: %s\n", EAN);
+    printf("Enter product EAN: %s\n", par->EAN);
     printf("Enter product name: ");
 }
 
-void printMenu_4(char *EAN, char *productName){
+void printMenu_4(MenuParameters *par){
     printf("\n================================================\n");
     printf("         INSERT / UPDATE PRODUCT\n");
     printf("================================================\n\n");
-    printf("Enter product EAN: %s\n", EAN);
-    printf("Enter product name: %s\n", productName);
+    printf("Enter product EAN: %s\n", par->EAN);
+    printf("Enter product name: %s\n", par->productName);
     printf("Enter quantity: ");
 }
 
-void printMenu_5(char *EAN, char *productName, int quantity){
+void printMenu_5(MenuParameters *par){
     printf("\n================================================\n");
     printf("         INSERT / UPDATE PRODUCT\n");
     printf("================================================\n\n");
-    printf("Enter product EAN: %s\n", EAN);
-    printf("Enter product name: %s\n", productName);
-    printf("Enter quantity: %d\n", quantity);
+    printf("Enter product EAN: %s\n", par->EAN);
+    printf("Enter product name: %s\n", par->productName);
+    printf("Enter quantity: %d\n", par->quantity);
     printf("Enter price: ");
 }
 
-void printMenu_6(){
+void printMenu_6(MenuParameters *par){
     printf("\n================================================\n");
     printf("             INSERT NEW ORDER\n");
     printf("================================================\n");
     printf("\nEnter customer code: ");
 }
 
-void printMenu_7(char *customerCode){
+void printMenu_7(MenuParameters *par){
     printf("\n================================================\n");
     printf("             INSERT NEW ORDER\n");
     printf("================================================\n");
-    printf("\nEnter customer code: %s\n", customerCode);
+    printf("\nEnter customer code: %s\n", par->customerCode);
     printf("Enter customer name: ");
 }
 
-void printMenu_8(char *customerCode, char *customerName){
+void printMenu_8(MenuParameters *par){
     printf("\n================================================\n");
     printf("             INSERT NEW ORDER\n");
     printf("================================================\n");
-    printf("\nEnter customer code: %s\n", customerCode);
-    printf("Enter customer name: %s\n", customerName);
+    printf("\nEnter customer code: %s\n", par->customerCode);
+    printf("Enter customer name: %s\n", par->customerName);
     printf("Enter order priority (%d - %d): ", PRIORITY_MIN, PRIORITY_MAX);
 }
 
+// PRINT MENUs END.
+
+// Validates input, prevents buffer overflow, re-displays (given) menu on error.
+int isValidBuffer(void (*printMenu)(MenuParameters*), MenuParameters *par, char *buffer, int bufferSize){
+
+    // Get input and check for input errors.
+    if (!fgets(buffer, bufferSize, stdin)) {
+        clearScreen();
+        printf("\nInput error.\n");
+        printMenu(par);
+        return 0;
+    }
+
+    // Check if we exceeded the bufferSize.
+    if(!strchr(buffer, '\n')){
+        clearBuffer();
+        clearScreen();
+        printf("%s", par->errorMsg);
+        printMenu(par);
+        return 0;
+    }    
+    return 1;
+}
+
+// Displays main menu and validates user selection (1-5), with error handling.
 void mainMenu(int *number){
+    
+    // Initialize parameters.
+    MenuParameters *par = malloc(sizeof(*par));
+    if(!par) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+    strcpy(par->errorMsg, "\nInvalid option. Please enter a number between 1 and 5.\n");
     
     // Print menu.
     clearScreen();
-    printMenu_1();
+    printMenu_1(par);
 
-    // Check if input is valid, no extra characters after entering a number, etc.
+    // Check for valid number, no extra characters after entering a number, etc.
     while(1){
 
-        // Initialize string.
+        // Read the buffer.
         char buffer[BUFFER_SIZE] = {' '};
-        if (!fgets(buffer, BUFFER_SIZE, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_1();
-            continue;
-        }
-
-        // Check if we exceeded the BUFFER_SIZE.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid option. Please enter a number between 1 and 5.\n");
-            printMenu_1();
-            continue;
-        }
+        if(!isValidBuffer(printMenu_1, par, buffer, sizeof(buffer))) continue;
 
         // Skip whitespace in the beginning. 
         char *temp = buffer;
@@ -105,8 +126,8 @@ void mainMenu(int *number){
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid option. Please enter a number between 1 and 5.\n");
-            printMenu_1();
+            printf("%s", par->errorMsg);
+            printMenu_1(par);
             continue;
         }
 
@@ -125,44 +146,35 @@ void mainMenu(int *number){
             *number = atoi(tempNumber);
             if(!(*number >= OPTION_MIN && *number <= OPTION_MAX)){
                 clearScreen();
-                printf("\nInvalid option. Please enter a number between 1 and 5.\n");
-                printMenu_1();
+                printf("%s", par->errorMsg);
+                printMenu_1(par);
                 continue;
             }
-            return;
+            break;
         } 
         clearScreen();
-        printf("\nInvalid option. Please enter a number between 1 and 5.\n");
-        printMenu_1();
+        printf("%s", par->errorMsg);
+        printMenu_1(par);
     }
+    free(par);
 }
 
-void readEAN(char *EAN){
+// Validates EAN input (digit-only, 4-13 chars).
+void readEAN(MenuParameters *par, char *EAN){
+
+    // Initialize parameters.
+    sprintf(par->errorMsg, "\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
 
     // Print menu.
     clearScreen();
-    printMenu_2();
+    printMenu_2(par);
 
-    // Check for valid EAN.
+    // Check for valid EAN, , no extra characters after entering a number, etc.
     while(1){
 
         // Initialize string.
         char buffer[EAN_BUF] = {' '};
-        if (!fgets(buffer, EAN_BUF, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_2();
-            continue;
-        }
-
-        // Check if we exceeded the EAN_DIGITS.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
-            printMenu_2();
-            continue;
-        }
+        if(!isValidBuffer(printMenu_2, par, buffer, sizeof(buffer))) continue;
 
         // Skip whitespace in the beginning. 
         char *temp = buffer;
@@ -171,8 +183,8 @@ void readEAN(char *EAN){
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
-            printMenu_2();
+            printf("%s", par->errorMsg);
+            printMenu_2(par);
             continue;
         }
 
@@ -191,52 +203,45 @@ void readEAN(char *EAN){
             int length = strlen(tempValue);
             if(!(length >= EAN_MIN_DIGITS && length <= EAN_MAX_DIGITS)){
                 clearScreen();
-                printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
-                printMenu_2();
+                printf("%s", par->errorMsg);
+                printMenu_2(par);
                 continue;
             }
             strcpy(EAN, tempValue);
             return;
         } 
         clearScreen();
-        printf("\nInvalid EAN. Please try again | (%d - %d) Characters.\n", EAN_MIN_DIGITS, EAN_MAX_DIGITS);
-        printMenu_2();
+        printf("%s", par->errorMsg);
+        printMenu_2(par);
     }
 }
 
-void readProductName(char *EAN, char *productName){
+// Gets product name from user with non-empty validation.
+void readProductName(MenuParameters *par, char *EAN, char *productName){
+
+    // Initialize parameters.
+    strcpy(par->errorMsg, "\nInvalid product name!\n");
+    strcpy(par->EAN, EAN);
 
     // Print menu.
     clearScreen();
-    printMenu_3(EAN);
+    printMenu_3(par);
     
+    // Check if product name is less than NAME_LENGTH, and check for empty string.
     while(1){
 
         // Initialize string.
         char buffer[NAME_LENGTH] = {' '};
-        if (!fgets(buffer, NAME_LENGTH, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_3(EAN);
-            continue;
-        }
+        if(!isValidBuffer(printMenu_3, par, buffer, sizeof(buffer))) continue;
 
-        // Check if we exceeded the NAME_LENGTH.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid product name!\n");
-            printMenu_3(EAN);
-            continue;
-        } 
-
+        // Check if the user gave no input.
         buffer[strlen(buffer) - 1] = '\0';
         char *temp = buffer;
         while(isspace(*temp)) ++temp;
         if(strlen(temp) < 1){
             clearScreen();
             printf("\nNo input provided. Please enter a product name.\n");
-            printMenu_3(EAN);
+            printMenu_3(par);
             continue;
         }
         strcpy(productName, temp);
@@ -244,32 +249,24 @@ void readProductName(char *EAN, char *productName){
     }
 }
 
-void readQuantity(char *EAN, char *productName, int *quantity){
+// Validates quantity input (digit-only, positive numbers only, length checks).
+void readQuantity(MenuParameters *par, char *EAN, char *productName, int *quantity){
+
+    // Initialize parameters.
+    strcpy(par->errorMsg, "\nInvalid quantity. Please try again.\n");
+    strcpy(par->EAN, EAN);
+    strcpy(par->productName, productName);
 
     // Print menu.
     clearScreen();
-    printMenu_4(EAN, productName);
+    printMenu_4(par);
 
-    // Check for valid Quantity.
+    // Check for valid quantity, positive only and less than QTY_MAX_DIGITS.
     while(1){
 
         // Initialize string.
         char buffer[BUFFER_SIZE] = {' '};
-        if (!fgets(buffer, BUFFER_SIZE, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_4(EAN, productName);
-            continue;
-        }
-
-        // Check if we exceeded the BUFFER_SIZE.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid quantity. Please try again.\n");
-            printMenu_4(EAN, productName);
-            continue;
-        }
+        if(!isValidBuffer(printMenu_4, par, buffer, sizeof(buffer))) continue;
 
         // Skip whitespace in the beginning. 
         char *temp = buffer;
@@ -278,8 +275,8 @@ void readQuantity(char *EAN, char *productName, int *quantity){
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid quantity. Please try again.\n");
-            printMenu_4(EAN, productName);
+            printf("%s", par->errorMsg);
+            printMenu_4(par);
             continue;
         }
 
@@ -298,44 +295,40 @@ void readQuantity(char *EAN, char *productName, int *quantity){
             int length = strlen(tempValue);
             if(length >= QTY_MAX_DIGITS){
                 clearScreen();
-                printf("\nInvalid quantity. Please try again.\n");
-                printMenu_4(EAN, productName);
+                printf("%s", par->errorMsg);
+                printMenu_4(par);
                 continue;
             }
             *quantity = atoi(tempValue);
             return;
         } 
         clearScreen();
-        printf("\nInvalid quantity. Please try again.\n");
-        printMenu_4(EAN, productName);
+        printf("%s", par->errorMsg);
+        printMenu_4(par);
     }
 }
 
-void readPrice(char *EAN, char *productName, int quantity, double *price){
+// Validates price input with decimal format checking (e.g., 12.50).
+// Only accepts dots, not commas.
+void readPrice(MenuParameters *par, char *EAN, char *productName, int quantity, double *price){
+
+    // Initialize parameters.
+    strcpy(par->errorMsg, "\nInvalid price. Please enter a reasonable value (e.g. 12.50).\n");
+    strcpy(par->EAN, EAN);
+    strcpy(par->productName, productName);
+    par->quantity = quantity;
+
     // Print menu.
     clearScreen();
-    printMenu_5(EAN, productName, quantity);
+    printMenu_5(par);
 
-    // Check for valid Quantity.
+    // Check for valid price.
+    // Since it's a double, we only accept dots to avoid issues with the compiler.
     while(1){
 
         // Initialize string.
         char buffer[BUFFER_SIZE] = {' '};
-        if (!fgets(buffer, BUFFER_SIZE, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_5(EAN, productName, quantity);
-            continue;
-        }
-
-        // Check if we exceeded the BUFFER_SIZE.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid price. Please enter a reasonable value (e.g. 12.50).\n");
-            printMenu_5(EAN, productName, quantity);
-            continue;
-        }
+        if(!isValidBuffer(printMenu_5, par, buffer, sizeof(buffer))) continue;
 
         // Skip whitespace in the beginning. 
         char *temp = buffer;
@@ -344,8 +337,8 @@ void readPrice(char *EAN, char *productName, int quantity, double *price){
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid price. Please enter a reasonable value (e.g. 12.50).\n");
-            printMenu_5(EAN, productName, quantity);
+            printf("%s", par->errorMsg);
+            printMenu_5(par);
             continue;
         }
 
@@ -353,7 +346,7 @@ void readPrice(char *EAN, char *productName, int quantity, double *price){
         int length = 0;
         char finalDouble[BUFFER_SIZE] = {' '};
 
-        // Get the first part.
+        // Get first part of the number (e.g., 12.50 -> 12).
         int index = 0;
         char tempValue[BUFFER_SIZE] = {' '};
         while(index < (BUFFER_SIZE - 1) && isdigit(*temp)){
@@ -363,7 +356,7 @@ void readPrice(char *EAN, char *productName, int quantity, double *price){
         length = index;
         strcpy(finalDouble, tempValue);
 
-        // Check if there's a dot after the number.
+        // Check if there's a dot after the number and include it in the string.
         if(*temp == '.'){
             strcat(finalDouble, ".");
             ++temp; ++length;
@@ -377,8 +370,8 @@ void readPrice(char *EAN, char *productName, int quantity, double *price){
             }
             if(strlen(tempValue) < 1){
                 clearScreen();
-                printf("\nInvalid price. Please enter a reasonable value (e.g. 12.50).\n");
-                printMenu_5(EAN, productName, quantity);
+                printf("%s", par->errorMsg);
+                printMenu_5(par);
                 continue;
             }
             length += index;
@@ -394,52 +387,44 @@ void readPrice(char *EAN, char *productName, int quantity, double *price){
             int length = strlen(finalDouble);
             if(length > 10){
                 clearScreen();
-                printf("\nInvalid price. Please enter a reasonable value (e.g. 12.50).\n");
-                printMenu_5(EAN, productName, quantity);
+                printf("%s", par->errorMsg);
+                printMenu_5(par);
                 continue;
             }
             *price = atof(finalDouble);
             return;
         } 
         clearScreen();
-        printf("\nInvalid price. Please enter a reasonable value (e.g. 12.50).\n");
-        printMenu_5(EAN, productName, quantity);
+        printf("%s", par->errorMsg);
+        printMenu_5(par);
     }
 }
 
-void readCustomerCode(char *customerCode){
+// Gets customer CODE with length validation and non-empty input checking.
+void readCustomerCode(MenuParameters *par, char *customerCode){
+
+    // Initialize parameters.
+    strcpy(par->errorMsg, "\nInvalid customer code!\n");
 
     // Print menu.
     clearScreen();
-    printMenu_6();
+    printMenu_6(par);
 
+    // Check if customer CODE is less than CUSTOMER_CODE_LEN, and check for empty string.
     while(1){
 
         // Initialize string.
         char buffer[CUSTOMER_CODE_LEN] = {' '};
-        if (!fgets(buffer, CUSTOMER_CODE_LEN, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_6();
-            continue;
-        }
-
-        // Check if we exceeded the CUSTOMER_CODE_LEN.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid customer code!\n");
-            printMenu_6();
-            continue;
-        } 
-
+        if(!isValidBuffer(printMenu_6, par, buffer, sizeof(buffer))) continue;
+        
+        // Check if the user gave no input.
         buffer[strlen(buffer) - 1] = '\0';
         char *temp = buffer;
         while(isspace(*temp)) ++temp;
         if(strlen(temp) < 1){
             clearScreen();
-            printf("\nNo input provided. Please enter a product name.\n");
-            printMenu_6();
+            printf("\nNo input provided. Please enter a customer code.\n");
+            printMenu_6(par);
             continue;
         }
         strcpy(customerCode, temp);
@@ -447,39 +432,32 @@ void readCustomerCode(char *customerCode){
     }
 }
 
-void readCustomerName(char *customerCode, char *customerName){
+// Gets customer NAME with length validation and non-empty input checking.
+void readCustomerName(MenuParameters *par, char *customerCode, char *customerName){
+
+    // Initialize parameters.
+    strcpy(par->errorMsg, "\nInvalid customer name!\n");
+    strcpy(par->customerCode, customerCode);
 
     // Print menu.
     clearScreen();
-    printMenu_7(customerCode);
+    printMenu_7(par);
 
+    // Check if customer NAME is less than NAME_LENGTH, and check for empty string.
     while(1){
 
         // Initialize string.
         char buffer[NAME_LENGTH] = {' '};
-        if (!fgets(buffer, NAME_LENGTH, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_7(customerCode);
-            continue;
-        }
-
-        // Check if we exceeded the NAME_LENGTH.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid customer name!\n");
-            printMenu_7(customerCode);
-            continue;
-        } 
+        if(!isValidBuffer(printMenu_7, par, buffer, sizeof(buffer))) continue;
         
+        // Check if the user gave no input.
         buffer[strlen(buffer) - 1] = '\0';
         char *temp = buffer;
         while(isspace(*temp)) ++temp;
         if(strlen(temp) < 1){
             clearScreen();
-            printf("\nNo input provided. Please enter a product name.\n");
-            printMenu_7(customerCode);
+            printf("\nNo input provided. Please enter a customer name.\n");
+            printMenu_7(par);
             continue;
         }
         strcpy(customerName, temp);
@@ -487,32 +465,24 @@ void readCustomerName(char *customerCode, char *customerName){
     }
 }
 
-void readPriority(char *customerCode, char *customerName, int *priority){
+// Validates order priority input with range check -> (1-10).
+void readPriority(MenuParameters *par, char *customerCode, char *customerName, int *priority){
+
+    // Initialize parameters.
+    sprintf(par->errorMsg, "\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
+    strcpy(par->customerCode, customerCode);
+    strcpy(par->customerName, customerName);
 
     // Print menu.
     clearScreen();
-    printMenu_8(customerCode, customerName);
+    printMenu_8(par);
 
     // Check if input is valid, no extra characters after entering a number, etc.
     while(1){
 
         // Initialize string.
         char buffer[BUFFER_SIZE] = {' '};
-        if (!fgets(buffer, BUFFER_SIZE, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_8(customerCode, customerName);
-            continue;
-        }
-
-        // Check if we exceeded the BUFFER_SIZE.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-            printMenu_8(customerCode, customerName);
-            continue;
-        }
+        if(!isValidBuffer(printMenu_8, par, buffer, sizeof(buffer))) continue;
 
         // Skip whitespace in the beginning. 
         char *temp = buffer;
@@ -521,8 +491,8 @@ void readPriority(char *customerCode, char *customerName, int *priority){
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-            printMenu_8(customerCode, customerName);
+            printf("%s", par->errorMsg);
+            printMenu_8(par);
             continue;
         }
 
@@ -541,18 +511,19 @@ void readPriority(char *customerCode, char *customerName, int *priority){
             *priority = atoi(tempNumber);
             if(!(*priority >= PRIORITY_MIN && *priority <= PRIORITY_MAX)){
                 clearScreen();
-                printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-                printMenu_8(customerCode, customerName);
+                printf("%s", par->errorMsg);
+                printMenu_8(par);
                 continue;
             }
             return;
         } 
         clearScreen();
-        printf("\nInvalid option. Please enter a number between %d and %d.\n", PRIORITY_MIN, PRIORITY_MAX);
-        printMenu_8(customerCode, customerName);
+        printf("%s", par->errorMsg);
+        printMenu_8(par);
     }
 }
 
+// Frees entire product, linked-list (in this case our inventory), from the memory.
 void freeInventory(Product *inventory){
     Product *current = inventory;
     while(current){
@@ -563,7 +534,7 @@ void freeInventory(Product *inventory){
 }
 
 // Run the program.
-void runMS(int option, Product **inventory, OrderBucket *ob){
+void runMS(int option, Product **inventory, OrderBucket *ob, MenuParameters *par){
     switch (option){
     case 1:
         // Initialize variables.
@@ -572,45 +543,55 @@ void runMS(int option, Product **inventory, OrderBucket *ob){
         char EAN[EAN_BUF], productName[NAME_LENGTH];
 
         // Read the EAN.
-        readEAN(EAN);
+        readEAN(par, EAN);
         
         // Suggest product if the prefix is NOT 13 characters long.
-        if(!suggestProduct(*inventory, EAN)) break; 
+        if(!suggestProduct(par, *inventory, EAN)) break; 
 
         // Check for product updates.
-        if(updateProduct(*inventory, EAN)) break;
+        if(updateProduct(par, *inventory, EAN)) break;
 
-        // If we suggest a product, then call updateQuantity().
-        readProductName(EAN, productName);
-        readQuantity(EAN, productName, &quantity);
-        readPrice(EAN, productName, quantity, &price);
+        // Read product name.
+        readProductName(par, EAN, productName);
+
+        // Read quantity.
+        readQuantity(par, EAN, productName, &quantity);
+
+        // Read price.
+        readPrice(par, EAN, productName, quantity, &price);
+
         printf("\n================================================\n");
         printf("\nProduct added successfully.\n");
 
-        // Add product to the list;
+        // Add product to the list.
         *inventory = insertProduct(*inventory, EAN, productName, quantity, price);
         break;
     case 2:
-        // Variables.
+        // Initialize variables.
         char customerCode[CUSTOMER_CODE_LEN];
         char customerName[NAME_LENGTH];
         int priority;
 
-        // Read the variables.
-        readCustomerCode(customerCode);
-        readCustomerName(customerCode, customerName);
-        readPriority(customerCode, customerName, &priority);
+        // Read the customer CODE and NAME, making sure they are not empty.
+        readCustomerCode(par, customerCode);
+        readCustomerName(par, customerCode, customerName);
+
+        // Read priority (For the queue).
+        readPriority(par, customerCode, customerName, &priority);
 
         // Insert the order into the FIFO queue, based on priority.
-        insertNewOrder(customerCode, customerName, priority, ob);
+        insertNewOrder(par, customerCode, customerName, priority, ob);
         break;
     case 3:
-        printInventory(*inventory);
+        // Print the inventory (Sorted by EAN).
+        printInventory(par, *inventory);
         break;
     case 4:
+        // Print all orders, based on priority.
         printAllOrders(ob, *inventory);
         break;
     default:
+        // Exit.
         printf("\nExiting Program. Goodbye!\n");
         break;
     }

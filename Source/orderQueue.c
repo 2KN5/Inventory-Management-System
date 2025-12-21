@@ -1,57 +1,67 @@
 #include "orderQueue.h"
+#include "product.h" 
+#include "utils.h"
 
-void printMenu_13(char *customerCode, char *customerName, int priority, int count){
+// PRINT MENUs START.
+
+void printMenu_13(MenuParameters *par){
     printf("\n================================================\n");
     printf("             INSERT NEW ORDER\n");
     printf("================================================\n");    
-    printf("\nEnter customer code: %s\n", customerCode);
-    printf("Enter customer name: %s\n", customerName);
-    printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
+    printf("\nEnter customer code: %s\n", par->customerCode);
+    printf("Enter customer name: %s\n", par->customerName);
+    printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, par->priority);
     printf("\n================================================\n\n");
-    printf("Current items in order: %d\n\n", count);
+    printf("Current items in order: %d\n\n", par->count);
     printf("Enter product EAN (or 0 to finish): ");
 }
 
-void printMenu_14(char *customerCode, char *customerName, int priority, int count, char *itemEAN){
+void printMenu_14(MenuParameters *par){
     printf("\n================================================\n");
     printf("             INSERT NEW ORDER\n");
     printf("================================================\n");
-    printf("\nEnter customer code: %s\n", customerCode);
-    printf("Enter customer name: %s\n", customerName);
-    printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, priority);
+    printf("\nEnter customer code: %s\n", par->customerCode);
+    printf("Enter customer name: %s\n", par->customerName);
+    printf("Enter order priority (%d - %d): %d\n", PRIORITY_MIN, PRIORITY_MAX, par->priority);
     printf("\n================================================\n\n");
-    printf("Current items in order: %d\n\n", count);
-    printf("Enter product EAN (or 0 to finish): %s\n", itemEAN);
+    printf("Current items in order: %d\n\n", par->count);
+    printf("Enter product EAN (or 0 to finish): %s\n", par->EAN);
     printf("Enter quantity: ");
 }
 
-// Read item EAN.
-void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int priority, int count){
+// PRINT MENUs END.
+
+// Find product name by EAN.
+Product* findItemByEAN(const char *ean, Product *inventory){
+    if(!ean || !inventory) return NULL;
+    Product *current = inventory;
+    while(current != NULL){
+        if(strcmp(current->EAN, ean) == 0) return current;
+        current = current->next;
+    }
+    return NULL; 
+}
+
+// Validates EAN input (digit-only, 4-13 chars).
+void readItemEAN(MenuParameters *par, char *itemEAN, char *customerCode, char *customerName, int priority, int count){
+
+    // Initialize parameters.
+    strcpy(par->errorMsg, "\nInvalid EAN. Has to be 13 characters long.\n");
+    strcpy(par->customerCode, customerCode);
+    strcpy(par->customerName, customerName);
+    par->priority = priority;
+    par->count = count;
 
     // Print menu.
     clearScreen();
-    printMenu_13(customerCode, customerName, priority, count);
+    printMenu_13(par);
 
-    // Check for valid EAN.
+    // Check for valid EAN, , no extra characters after entering a number, etc.
     while(1){
 
         // Initialize string.
         char buffer[EAN_BUF] = {' '};
-        if (!fgets(buffer, EAN_BUF, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_13(customerCode, customerName, priority, count);
-            continue;
-        }
-
-        // Check if we exceeded the EAN_DIGITS.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid EAN. Has to be 13 characters long.\n");
-            printMenu_13(customerCode, customerName, priority, count);
-            continue;
-        }
+        if(!isValidBuffer(printMenu_13, par, buffer, sizeof(buffer))) continue;
 
         // Skip whitespace in the beginning. 
         char *temp = buffer;
@@ -60,8 +70,8 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid EAN. Has to be 13 characters long.\n");
-            printMenu_13(customerCode, customerName, priority, count);
+            printf("%s", par->errorMsg);
+            printMenu_13(par);
             continue;
         }
 
@@ -80,46 +90,40 @@ void readItemEAN(char *itemEAN, char *customerCode, char *customerName, int prio
             int length = strlen(tempValue);
             if(length != EAN_MAX_DIGITS && strcmp(tempValue, "0") != 0){
                 clearScreen();
-                printf("\nInvalid EAN. Has to be 13 characters long.\n");
-                printMenu_13(customerCode, customerName, priority, count);
+                printf("%s", par->errorMsg);
+                printMenu_13(par);
                 continue;
             }
             strcpy(itemEAN, tempValue);
             return;
         } 
         clearScreen();
-        printf("\nInvalid EAN. Has to be 13 characters long.\n");
-        printMenu_13(customerCode, customerName, priority, count);
+        printf("%s", par->errorMsg);
+        printMenu_13(par);
     }
 }
 
-// Read item quantity.
-void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *customerName, int priority, int count){
+// Validates quantity input (digit-only, positive numbers only, length checks).
+void readItemQuantity(MenuParameters *par, char *itemEAN, int *quantity, char *customerCode, char *customerName, int priority, int count){
+
+    // Initialize parameters.
+    strcpy(par->errorMsg, "\nInvalid EAN. Has to be 13 characters long.\n");
+    strcpy(par->customerCode, customerCode);
+    strcpy(par->customerName, customerName);
+    strcpy(par->EAN, itemEAN);
+    par->priority = priority;
+    par->count = count;
 
     // Print menu.
     clearScreen();
-    printMenu_14(customerCode, customerName, priority, count, itemEAN);
+    printMenu_14(par);
 
-    // Check for valid Quantity.
+    // Check for valid quantity, positive only and less than QTY_MAX_DIGITS.
     while(1){
 
         // Initialize string.
         char buffer[BUFFER_SIZE] = {' '};
-        if (!fgets(buffer, BUFFER_SIZE, stdin)) {
-            clearScreen();
-            printf("\nInput error.\n");
-            printMenu_14(customerCode, customerName, priority, count, itemEAN);
-            continue;
-        }
-
-        // Check if we exceeded the BUFFER_SIZE.
-        if(!strchr(buffer, '\n')){
-            clearBuffer();
-            clearScreen();
-            printf("\nInvalid quantity. Please try again.\n");
-            printMenu_14(customerCode, customerName, priority, count, itemEAN);
-            continue;
-        }
+        if(!isValidBuffer(printMenu_14, par, buffer, sizeof(buffer))) continue;
 
         // Skip whitespace in the beginning. 
         char *temp = buffer;
@@ -128,8 +132,8 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
         // Check if it's a digit, if not just skip.
         if(!isdigit(*temp)){
             clearScreen();
-            printf("\nInvalid quantity. Please try again.\n");
-            printMenu_14(customerCode, customerName, priority, count, itemEAN);
+            printf("%s", par->errorMsg);
+            printMenu_14(par);
             continue;
         }
 
@@ -148,16 +152,16 @@ void readItemQuantity(char *itemEAN, int *quantity, char *customerCode, char *cu
             int length = strlen(tempValue);
             if(length >= QTY_MAX_DIGITS){
                 clearScreen();
-                printf("\nInvalid quantity. Please try again.\n");
-                printMenu_14(customerCode, customerName, priority, count, itemEAN);
+                printf("%s", par->errorMsg);
+                printMenu_14(par);
                 continue;
             }
             *quantity = atoi(tempValue);
             return;
         } 
         clearScreen();
-        printf("\nInvalid quantity. Please try again.\n");
-        printMenu_14(customerCode, customerName, priority, count, itemEAN);
+        printf("%s", par->errorMsg);
+        printMenu_14(par);
     }
 }
 
@@ -265,17 +269,6 @@ void freeOrderBucket(OrderBucket *ob){
         Order *order;
         while((order = dequeue(&ob->buckets[i])) != NULL) free(order);
     }
-}
-
-// Find product name by EAN.
-Product* findItemByEAN(const char *ean, Product *inventory){
-    if(!ean || !inventory) return NULL;
-    Product *current = inventory;
-    while(current != NULL){
-        if(strcmp(current->EAN, ean) == 0) return current;
-        current = current->next;
-    }
-    return NULL; 
 }
 
 // Print all orders.
@@ -401,7 +394,7 @@ void printAllOrders(OrderBucket *ob, Product *inventory){
 }
 
 // Insert new order.
-void insertNewOrder(char *customerCode, char *customerName, int priority, OrderBucket *ob){
+void insertNewOrder(MenuParameters *par, char *customerCode, char *customerName, int priority, OrderBucket *ob){
 
     // Create the new order.
     Order *newOrder = malloc(sizeof(*newOrder));
@@ -426,9 +419,9 @@ void insertNewOrder(char *customerCode, char *customerName, int priority, OrderB
         // Read the values.
         char itemEAN[EAN_BUF];
         int quantity;
-        readItemEAN(itemEAN, customerCode, customerName, priority, count);
+        readItemEAN(par, itemEAN, customerCode, customerName, priority, count);
         if(strcmp(itemEAN, "0") == 0) break;
-        readItemQuantity(itemEAN, &quantity, customerCode, customerName, priority, count);
+        readItemQuantity(par, itemEAN, &quantity, customerCode, customerName, priority, count);
    
         // In case of duplicates, merge quantities.
         int found = 0;
